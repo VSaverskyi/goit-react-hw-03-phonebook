@@ -9,7 +9,35 @@ class App extends Component {
   state = {
   contacts: [],
   filter: ''
-}
+  }
+
+  componentDidMount() {
+    const data = this.getFromLocalStorage('savedContacts');
+    data && this.setState({ contacts: data });
+  }
+  
+  componentDidUpdate(_, prevState) {
+    const oldContacts = prevState.contacts.join('');
+    const newContacts = this.state.contacts.join('');
+    oldContacts !== newContacts && this.setToLocalStorage('savedContacts', this.state.contacts);
+  }
+
+  setToLocalStorage = (key, value) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  getFromLocalStorage = key => {
+    try {
+      const data = JSON.parse(localStorage.getItem(key));
+    return  data === null ? undefined : data;
+  } catch (err) {
+    console.log(err);
+  }
+};
   
   handleChange = e => {
     this.setState({
@@ -47,7 +75,7 @@ class App extends Component {
         <ContactsWrapper>
           <h2>Contacts</h2>
           <Filter filter={filter} onChange={this.handleChange}/>
-          <ContactList contacts={contacts} contactsFilter={contacts.filter(this.checkIncludesFilterInArray)}  onDeleteBtnClick={this.handleDeleteBtnClick} />
+          <ContactList contactsFilter={contacts.filter(this.checkIncludesFilterInArray)}  onDeleteBtnClick={this.handleDeleteBtnClick} />
         </ContactsWrapper>
         }
       </Container>
