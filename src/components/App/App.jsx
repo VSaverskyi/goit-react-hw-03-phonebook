@@ -34,8 +34,7 @@ class App extends Component {
 
   getFromLocalStorage = key => {
     try {
-      const data = JSON.parse(localStorage.getItem(key));
-    return  data === null ? undefined : data;
+      return JSON.parse(localStorage.getItem(key));
   } catch (err) {
     console.log(err);
   }
