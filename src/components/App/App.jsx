@@ -13,13 +13,15 @@ class App extends Component {
 
   componentDidMount() {
     const data = this.getFromLocalStorage('savedContacts');
-    data && this.setState({ contacts: data });
+    if (data) {
+      this.setState({ contacts: data })
+    }
   }
   
   componentDidUpdate(_, prevState) {
-    const oldContacts = prevState.contacts.join('');
-    const newContacts = this.state.contacts.join('');
-    oldContacts !== newContacts && this.setToLocalStorage('savedContacts', this.state.contacts);
+    if (prevState.contacts !== this.state.contacts) {
+      this.setToLocalStorage('savedContacts', this.state.contacts);
+    }
   }
 
   setToLocalStorage = (key, value) => {
@@ -46,9 +48,11 @@ class App extends Component {
   }
 
   handleSubmit = (name, number) => {
-    this.state.contacts.find((item) => item.name.toLowerCase() === name.toLowerCase()) ?
-      alert(name + ' is already in contacts.') :
-      this.setState((prevState) => {
+    if (this.state.contacts.find((item) => item.name.toLowerCase() === name.toLowerCase())) {
+      return alert(name + ' is already in contacts.');
+    }
+     
+    this.setState((prevState) => {
         return {contacts: prevState.contacts.concat({ name, number, id: nanoid() })}
       }
     );
